@@ -37,6 +37,8 @@ def sample_action(params, state, key):
     return int(action), float(log_prob), float(value)
 
 def ppo_loss(params, old_log_probs, states, actions, advantages, targets, epsilon=0.2, vf_coef=0.5, ent_coef=0.01):
+    # NOTE: This recomputation is redundant in the first epoch; thereafter the policy has changed so the logits will be 
+    # different from the original ones computed in the trajectory collection phase.
     logits, values = jax.vmap(lambda s: ActorCritic(action_dim).apply(params, s))(states)
     log_probs = jax.nn.log_softmax(logits)
     new_log_probs = jnp.take_along_axis(log_probs, actions[:, None], axis=1).squeeze()
