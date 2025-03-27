@@ -30,6 +30,7 @@ def sample_action(params, state, key):
 
 # Compute REINFORCE loss
 def reinforce_loss(params, states, actions, returns):
+    # NOTE: computing logits again here even though they were computed earlier; this can be optimized further.
     logits = jax.vmap(lambda s: PolicyNetwork(action_dim).apply(params, s))(states)
     log_probs = jax.nn.log_softmax(logits)
     action_log_probs = jnp.take_along_axis(log_probs, actions[:, None], axis=1).squeeze()
