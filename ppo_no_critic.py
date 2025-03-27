@@ -47,8 +47,12 @@ def ppo_policy_loss(params, old_log_probs, states, actions, returns, epsilon=0.2
     new_log_probs = jnp.take_along_axis(log_probs, actions[:, None], axis=1).squeeze()
     # Compute probability ratio between new and old policies
     ratio = jnp.exp(new_log_probs - old_log_probs)
+
     # Compute "advantages" as returns normalized by subtracting the mean
-    advantages = returns - jnp.mean(returns)
+    # NOTE: funny enough this is basically what GRPO is; instead, the baseline for GRPO is the mean of many more 
+    # trajectories' returns. See https://yugeten.github.io/posts/2025/01/ppogrpo/.
+    advantages = returns - jnp.mean(returns) 
+
     # Clipped surrogate objective (PPO objective)
     surrogate1 = ratio * advantages
     surrogate2 = jnp.clip(ratio, 1 - epsilon, 1 + epsilon) * advantages
