@@ -5,6 +5,9 @@ import flax.linen as nn
 import gymnasium as gym
 import numpy as np
 
+# Check if JAX is using GPU
+print(f"Available devices: {jax.devices()}")
+
 # Policy (Actor) Network
 class PolicyNetwork(nn.Module):
     action_dim: int
