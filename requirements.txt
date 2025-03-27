@@ -1,0 +1,5 @@
+jax[cuda12]
+optax
+flax
+numpy
+gymnasium
